@@ -1,8 +1,8 @@
-module com.example.csit228_f1_v2 {
+module task.registration_app {
     requires javafx.controls;
     requires javafx.fxml;
 
 
-    opens com.example.csit228_f1_v2 to javafx.fxml;
-    exports com.example.csit228_f1_v2;
+    opens task.registration_app to javafx.fxml;
+    exports task.registration_app;
 }

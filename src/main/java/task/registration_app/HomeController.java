@@ -1,4 +1,4 @@
-package com.example.csit228_f1_v2;
+package task.registration_app;
 
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;

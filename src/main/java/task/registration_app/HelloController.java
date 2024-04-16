@@ -1,4 +1,4 @@
-package com.example.csit228_f1_v2;
+package task.registration_app;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,7 +9,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class HelloController {
     public GridPane pnLogin;
