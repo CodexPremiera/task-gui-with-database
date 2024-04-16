@@ -4,11 +4,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.util.Objects;
 
-public class HelloApplication extends javafx.application.Application {
+public class LoginApplication extends javafx.application.Application {
     @Override
     public void start(Stage stage) {
         try {

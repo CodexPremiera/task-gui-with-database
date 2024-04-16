@@ -8,29 +8,34 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Objects;
 
-public class HelloController {
+public class LoginController {
+    @FXML public AnchorPane loginBorderPane;
+    @FXML public AnchorPane switchToSignupContainer;
+    @FXML public Button switchToSignUp;
+
+    @FXML public AnchorPane loginContainer;
+    @FXML public TextField loginUsername;
+    @FXML public PasswordField loginPassword;
+    @FXML public Button btnLogin;
+    @FXML public Label loginRemark;
+
     private Parent root;
     private Stage stage;
     private Scene scene;
 
 
-    @FXML private TextField fieldUsername;
-    @FXML private TextField fieldPassword;
-    @FXML private Label labelRemark;
-    @FXML private Button btnLogout;
-
     public void onClickLogin(ActionEvent actionEvent) throws IOException {
         // get form input
-        String username = fieldUsername.getText();
-        String password = fieldPassword.getText();
+        String username = loginUsername.getText();
+        String password = loginPassword.getText();
 
         // verify user
         /*if (!users.getList().containsKey(username)) {
@@ -47,7 +52,7 @@ public class HelloController {
         }*/
 
         // login user
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/Home.fxml")));
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/home-view.fxml")));
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
