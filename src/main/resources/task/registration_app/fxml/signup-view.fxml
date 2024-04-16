@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="640.0" maxWidth="960.0" minHeight="640.0" minWidth="960.0" prefHeight="640.0" prefWidth="960.0" style="-fx-background-color: #242422;" stylesheets="@../css/LoginStyles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="task.registration_app.SignUpController">
+   <AnchorPane layoutX="554.0" prefHeight="640.0" prefWidth="400.0" style="-fx-background-color: #242422;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="52.0" layoutY="209.0" prefHeight="52.0" prefWidth="296.0" text="Welcome back!" textAlignment="CENTER" textFill="#f69a1d" AnchorPane.leftAnchor="52.0" AnchorPane.rightAnchor="52.0">
+         <font>
+            <Font name="Montserrat ExtraBold" size="36.0" />
+         </font>
+      </Label>
+      <Text fill="#cedecf" layoutX="70.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter your personal details and resume your journey with us" textAlignment="CENTER" wrappingWidth="259.6195411682129" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="69.98045883178713">
+         <font>
+            <Font name="Montserrat Regular" size="16.0" />
+         </font>
+      </Text>
+      <Button fx:id="switchLogin" layoutX="124.0" layoutY="390.0" mnemonicParsing="false" onAction="#setSwitchLogin" prefHeight="43.0" prefWidth="152.0" style="-fx-border-color: #cedecf; -fx-background-color: #242422;" styleClass="long-buttons" text="LOG IN" textAlignment="CENTER" textFill="#cedecf" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="124.0" />
+   </AnchorPane>
+   <AnchorPane minHeight="640.0" minWidth="560.0" prefHeight="640.0" prefWidth="560.0" style="-fx-background-color: #e7edde; -fx-background-radius: 0 0 0 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Label alignment="CENTER" layoutY="133.0" prefHeight="52.0" prefWidth="554.0" text="Sign up" textAlignment="CENTER" textFill="#242422" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <font>
+            <Font name="Montserrat Bold" size="42.0" />
+         </font>
+      </Label>
+      <TextField fx:id="signUpUsername" layoutX="100.0" layoutY="294.0" prefHeight="45.0" prefWidth="360.0" promptText="Username" styleClass="form-text-field" />
+      <TextField fx:id="signUpEmail" layoutX="100.0" layoutY="350.0" prefHeight="45.0" prefWidth="360.0" promptText="Email" styleClass="form-text-field" />
+      <PasswordField fx:id="signUpPassword" layoutX="100.0" layoutY="410.0" prefHeight="45.0" prefWidth="360.0" promptText="Password" styleClass="form-text-field" />
+      <Button fx:id="btnSignUp" layoutX="201.0" layoutY="509.0" mnemonicParsing="false" onAction="#onClickSignUp" prefHeight="43.0" prefWidth="158.0" style="-fx-background-color: #f69a1d;" styleClass="long-buttons" text="SIGN UP" textAlignment="CENTER" textFill="#242422" AnchorPane.bottomAnchor="88.60000000000002" AnchorPane.leftAnchor="201.0" AnchorPane.rightAnchor="201.0" AnchorPane.topAnchor="509.0" />
+
+      <Label alignment="CENTER" layoutX="103.0" layoutY="208.0" prefHeight="22.0" prefWidth="354.0" text="Create your account using your email" textFill="#383836" AnchorPane.leftAnchor="103.0" AnchorPane.rightAnchor="103.0">
+         <font>
+            <Font name="Montserrat Regular" size="16.0" />
+         </font>
+      </Label>
+
+      <Label fx:id="signUpRemark" alignment="CENTER" layoutX="103.0" layoutY="565.0" prefHeight="22.0" prefWidth="354.0" textFill="#e12d2d" AnchorPane.leftAnchor="103.0" AnchorPane.rightAnchor="103.39999999999998">
+         <font>
+            <Font name="Montserrat Regular" size="16.0" />
+         </font>
+      </Label>
+
+   </AnchorPane>
+</AnchorPane>
