@@ -12,6 +12,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import task.database.TblUserAccount;
+import task.entities.UserAccount;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -29,7 +30,8 @@ public class SignUpController {
     private Stage stage;
     private Scene scene;
 
-    private String userAccountID;
+    private UserAccount userAccount;
+    private HomeController homeController = new HomeController();
 
     /* METHODS */
 
@@ -39,6 +41,7 @@ public class SignUpController {
         String password = signUpPassword.getText();
         String email = signUpEmail.getText().trim();
 
+        // validations
         if (username.equals("") || password.trim().equals("") || email.equals("")) {
             signUpRemark.setText("Please fill in all the fields.");
             return;
@@ -53,20 +56,14 @@ public class SignUpController {
         }
 
         try {
-            TblUserAccount.insert(username, email, password);
-        } catch (SQLException e) {
+            this.userAccount = TblUserAccount.insert(username, email, password);
+        } catch (IllegalArgumentException e) {
             signUpRemark.setText(e.getMessage());
             return;
         }
 
-
-        // login user
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/home-view.fxml")));
-        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-
-        stage.show();
+        // enter home
+        homeController.launchHome(actionEvent, userAccount);
     }
 
     public void onClickLogout(ActionEvent actionEvent) throws IOException {

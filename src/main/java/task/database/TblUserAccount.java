@@ -5,20 +5,41 @@ import task.entities.UserAccount;
 import java.sql.*;
 
 public class TblUserAccount {
-    public static void main(String[] args) throws SQLException {
-        //createTable();
-        /*try {
-            insert("Ashley", "ashley@email.com", "password123");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }*/
-
-        UserAccount userAccount = getUserAccount("ashleey@email.com");
+    public static void main(String[] args) {
+        createTable();
+        UserAccount userAccount = null;
+        try {
+            userAccount = retrieve("ashleey@email.com", "ashley_ken_123");
+        } catch (SQLException | IllegalArgumentException e) {
+            System.out.println(
+                    "Failed to retrieve user-account:" + "\n"
+                            + e.getMessage() + "\n"
+            );
+        }
         System.out.println(userAccount);
     }
 
+
+    /**
+     * CREATE
+     * <p>
+     * This method creates the user account table and associated trigger in the database.
+     * It executes SQL queries to create the 'tbl_user_account' table and a trigger named
+     * 'pre_insert' in the database.
+     * <p>
+     * The 'tbl_user_account' table stores user account information including user ID,
+     * username, email, password, creation time, and activation status. Meanwhile, the
+     * trigger 'pre_insert' automatically sets the creation time and user ID before
+     * inserting a new row into the 'tbl_user_account' table.
+     * <p>
+     * Upon successful execution, this method prints status messages indicating that the
+     * table and trigger have been created, and commits the transaction. If an error occurs
+     * during execution, it prints an error message, rolls back any changes, and closes the
+     * database connection.
+     * <p>
+     * Note: This method does not return any value.
+     */
     public static void createTable() {
-        // SQL queries to create the table and the trigger
         String createTableQuery = """
             CREATE TABLE IF NOT EXISTS `tbl_user_account` (
             `ID_User` CHAR(36) NOT NULL,
@@ -41,31 +62,25 @@ public class TblUserAccount {
         Connection connection = null;
 
         try {
-            // setup connection and statements
             connection = MySQLConnection.getConnection();
             connection.setAutoCommit(false);
+
             Statement statement = connection.createStatement();
-
-            // execute the create table and trigger queries
             statement.execute(createTableQuery);
-            System.out.println("Table has been created.");
-
             statement.execute(createTriggerQuery);
-            System.out.println("Trigger has been created.");
 
-            // commit the transaction
             connection.commit();
             System.out.println("Transaction committed.");
         } catch (SQLException | NullPointerException e) {
-            System.out.println("Table or trigger has not been created. Rolling back changes." + "\n" + e.getMessage());
+            System.out.println(
+                    "Failed to create table. Rolling back changes." + "\n"
+                    + e.getMessage() + "\n"
+            );
             try {
-                if (connection != null) {
+                if (connection != null)
                     connection.rollback();
-                    System.out.println("Rollback successful.");
-                }
             } catch (SQLException ex) {
-                System.out.println("Rollback failed.");
-                ex.printStackTrace();
+                System.out.println("Rollback failed." + "\n" + ex.getMessage());
             }
         } finally {
             try {
@@ -74,65 +89,91 @@ public class TblUserAccount {
                     connection.close();
                 }
             } catch (SQLException ex) {
-                System.out.println("Failed to close connection.");
-                ex.printStackTrace();
+                System.out.println("Failed to close connection." + "\n" + ex.getMessage());
             }
         }
     }
+
 
     /**
      * INSERT
      *
      * <p>
      * This method inserts a new user-account as a new row in the tbl_user_account.
-     * @return UUID of the newly created table
+     * It first calls the {@link #emailExists} method to check if a user-account
+     * associated with the given email already exists. If so, it throws an SQLException.
+     * Otherwise, it inserts the new user-account the tbl_user_account and returns it
+     * as a new {@link UserAccount} object through the {@link #retrieve} method.
+     * @param username
+     * @param email
+     * @param password
+     * @return UserAccount object of newly created class
+     * @throws IllegalArgumentException the given email already exists
      * */
-    public static UserAccount insert(String username, String email, String password) throws SQLException {
-        // query the db if the email (which is unique) already exist. If so, return.
+    public static UserAccount insert(String username, String email, String password) throws IllegalArgumentException {
         if (emailExists(email))
-            throw new SQLException("The given email already exists.");
+            throw new IllegalArgumentException("The given email already exists.");
 
-        // do if the email does not exist yet
         try (Connection connection = MySQLConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                      "INSERT INTO tbl_user_account (Username, Email, Password) " +
-                             "VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                             "VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)
         ) {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, email);
             preparedStatement.setString(3, password);
-
-            int rowsInserted = preparedStatement.executeUpdate();
-            System.out.println(rowsInserted + " row(s) inserted.");
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Data has not been inserted." + "\n"
                     + e.getMessage());
         }
 
-        // return user account
-        return getUserAccount(email);
+        try {
+            return retrieve(email, password);
+        } catch (SQLException e) {
+            return null;
+        }
     }
 
-    private static boolean emailExists(String email) throws SQLException {
-        boolean exists = false;
+    private static boolean emailExists(String email) {
         try (Connection connection = MySQLConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "SELECT COUNT(*) FROM tbl_user_account WHERE Email = ?");
+                     "SELECT COUNT(*) FROM tbl_user_account WHERE Email = ?")
         ) {
             preparedStatement.setString(1, email);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     int count = resultSet.getInt(1);
-                    exists = count > 0;
+                    return count > 0;
                 }
             }
-        }
-        return exists;
+        } catch (SQLException ignored) {}
+
+        return false;
     }
 
 
-    private static UserAccount getUserAccount(String email) {
-
+    /**
+     * RETRIEVE
+     * <p>
+     * This method Retrieves a user account from the database. It queries the 'tbl_user_account'
+     * table in the database to retrieve the user account associated with the specified email
+     * and password.
+     * <p>
+     * If a matching user account is found, the method returns it as a new {@link UserAccount}
+     * object. If none is found or if the password is wrong, it throws an exception.
+     * <p>
+     * Note: This method handles database connectivity internally and does not require
+     * the caller to provide a database connection.
+     *
+     * @param email the email of the user account to retrieve
+     * @param password the password of the user account to retrieve
+     * @return a UserAccount object representing the retrieved user account,
+     *         or null if no matching user account is found
+     * @throws IllegalArgumentException indicating a non-existing account of a wrong password.
+     * @throws SQLException indicating a database failure to retrieve the user account
+     * */
+    public static UserAccount retrieve(String email, String password) throws IllegalArgumentException, SQLException {
         try (Connection connection = MySQLConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                 "SELECT * FROM tbl_user_account WHERE Email = ?"))
@@ -140,20 +181,22 @@ public class TblUserAccount {
             preparedStatement.setString(1, email);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet != null && resultSet.next()) {
-                String userId = resultSet.getString("ID_User");
-                String username = resultSet.getString("Username");
-                email = resultSet.getString("Email");
-                String password = resultSet.getString("Password");
-                String createTime = resultSet.getString("CreateTime");
+            if (resultSet == null || !resultSet.next())
+                throw new IllegalArgumentException("User account does not exist.");
 
-                return new UserAccount(userId, username, email, password, createTime);
-            }
+            if (!resultSet.getString("Password").equals(password))
+                throw new IllegalArgumentException("Wrong Password");
+
+            String userId = resultSet.getString("ID_User");
+            String username = resultSet.getString("Username");
+            String createTime = resultSet.getString("CreateTime");
+
+            return new UserAccount(userId, username, email, password, createTime);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
         } catch (SQLException e) {
-            System.out.println("Error retrieving user account: " + e.getMessage());
+            throw new SQLException(e.getMessage());
         }
-
-        return null;
     }
 
 
@@ -162,7 +205,7 @@ public class TblUserAccount {
              PreparedStatement preparedStatement = connection.prepareStatement(
                      "UPDATE User SET name = ?, email = ?, password = ? " +
                              "WHERE id = ?"
-             ); )
+             ) )
         {
             preparedStatement.setString(1, newName);
             preparedStatement.setString(2, newEmail);

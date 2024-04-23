@@ -12,6 +12,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import task.entities.UserAccount;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -25,40 +26,28 @@ public class HomeController {
     private Parent root;
     private Stage stage;
     private Scene scene;
+    private UserAccount userAccount;
 
 
-    public void onClickSignUp(ActionEvent actionEvent) throws IOException {
-        // get form input
-        String username = homeUsername.getText();
-        String password = homePassword.getText();
+    public void launchHome(ActionEvent actionEvent, UserAccount userAccount) throws IOException {
+        this.userAccount = userAccount;
+        launchHome(actionEvent);
+    }
 
-        // verify user
-        /*if (!users.getList().containsKey(username)) {
-            labelRemark.setText("User doesn't exist");
-            return;
-        }
-
-        // verify password
-        User user = users.getList().get(username);
-
-        if (!user.getPassword().equals(password)) {
-            labelRemark.setText("Wrong Password");
-            return;
-        }*/
-
-        // login user
+    public void launchHome(ActionEvent actionEvent) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/home-view.fxml")));
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
-        stage.setScene(scene);
 
+        stage.setScene(scene);
         stage.show();
     }
 
     public void onClickLogout(ActionEvent actionEvent) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/signup-view.fxml")));
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/login-view.fxml")));
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
+
         stage.setScene(scene);
         stage.show();
     }

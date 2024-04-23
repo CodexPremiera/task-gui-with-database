@@ -28,7 +28,7 @@
             <Font name="Montserrat Bold" size="42.0" />
          </font>
       </Label>
-      <TextField fx:id="loginUsername" layoutX="100.0" layoutY="301.0" prefHeight="45.0" prefWidth="360.0" promptText="Username" styleClass="form-text-field" />
+      <TextField fx:id="loginEmail" layoutX="100.0" layoutY="301.0" prefHeight="45.0" prefWidth="360.0" promptText="Email" styleClass="form-text-field" />
       <PasswordField fx:id="loginPassword" layoutX="100.0" layoutY="361.0" prefHeight="45.0" prefWidth="360.0" promptText="Password" styleClass="form-text-field" />
       <Button fx:id="btnLogin" layoutX="201.0" layoutY="509.0" mnemonicParsing="false" onAction="#onClickLogin" prefHeight="43.0" prefWidth="158.0" style="-fx-background-color: #f69a1d;" styleClass="long-buttons" text="LOG IN" textAlignment="CENTER" textFill="#242422" AnchorPane.bottomAnchor="88.60000000000002" AnchorPane.leftAnchor="201.0" AnchorPane.rightAnchor="201.0" AnchorPane.topAnchor="509.0" />
 
