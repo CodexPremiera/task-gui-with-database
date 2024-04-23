@@ -11,10 +11,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import task.database.Database;
+import task.database.TblUserAccount;
 
 import java.io.IOException;
-import java.util.Date;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class SignUpController {
@@ -29,6 +29,7 @@ public class SignUpController {
     private Stage stage;
     private Scene scene;
 
+    private String userAccountID;
 
     /* METHODS */
 
@@ -51,8 +52,12 @@ public class SignUpController {
             return;
         }
 
-        System.out.println(username + " " + password + " " + email);
-        Database.insert(username, password, email);
+        try {
+            TblUserAccount.insert(username, email, password);
+        } catch (SQLException e) {
+            signUpRemark.setText(e.getMessage());
+            return;
+        }
 
 
         // login user

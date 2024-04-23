@@ -19,6 +19,7 @@ public class MySQLConnection {
             System.out.println("Connection to MySQL has been established.");
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+            System.out.println("Connection to MySQL has been failed.");
         }
 
         return conn;
