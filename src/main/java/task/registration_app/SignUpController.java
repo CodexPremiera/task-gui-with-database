@@ -10,7 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -29,24 +28,29 @@ public class SignUpController {
     private Scene scene;
 
 
+    /* METHODS */
+
     public void onClickSignUp(ActionEvent actionEvent) throws IOException {
         // get form input
-        String username = signUpUsername.getText();
+        String username = signUpUsername.getText().trim();
         String password = signUpPassword.getText();
+        String email = signUpEmail.getText().trim();
 
-        // verify user
-        /*if (!users.getList().containsKey(username)) {
-            labelRemark.setText("User doesn't exist");
+        if (username.equals("") || password.trim().equals("") || email.equals("")) {
+            signUpRemark.setText("Please fill in all the fields.");
+            return;
+        }
+        if (!Utils.isValidEmail(email)) {
+            signUpRemark.setText("Please enter a valid email.");
+            return;
+        }
+        if (password.length() < 8) {
+            signUpRemark.setText("Password must have 8 characters or more.");
             return;
         }
 
-        // verify password
-        User user = users.getList().get(username);
+        System.out.println(username + " " + password + " " + email);
 
-        if (!user.getPassword().equals(password)) {
-            labelRemark.setText("Wrong Password");
-            return;
-        }*/
 
         // login user
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/home-view.fxml")));

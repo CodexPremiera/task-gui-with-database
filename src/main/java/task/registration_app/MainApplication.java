@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
-public class LoginApplication extends javafx.application.Application {
+public class MainApplication extends javafx.application.Application {
     @Override
     public void start(Stage stage) {
         try {

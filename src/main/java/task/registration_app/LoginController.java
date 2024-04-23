@@ -33,6 +33,12 @@ public class LoginController {
         String username = loginUsername.getText();
         String password = loginPassword.getText();
 
+        if (username.equals("") || password.equals("")) {
+            loginRemark.setText("Please fill in all the fields.");
+            return;
+        }
+        System.out.println(username + " " + password);
+
         // verify user
         /*if (!users.getList().containsKey(username)) {
             labelRemark.setText("User doesn't exist");
@@ -46,6 +52,7 @@ public class LoginController {
             labelRemark.setText("Wrong Password");
             return;
         }*/
+
 
         // login user
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/home-view.fxml")));
