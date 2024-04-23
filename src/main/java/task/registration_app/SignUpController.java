@@ -11,8 +11,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import task.database.Database;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Objects;
 
 public class SignUpController {
@@ -50,6 +52,7 @@ public class SignUpController {
         }
 
         System.out.println(username + " " + password + " " + email);
+        Database.insert(username, password, email);
 
 
         // login user

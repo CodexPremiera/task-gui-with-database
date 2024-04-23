@@ -3,13 +3,15 @@ package task.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class MySQLConnection {
     public static final String URL = "jdbc:mysql://localhost:3306/db_comandao_jdbc";
     public static final String USER = "root";
     public static final String PASSWORD = "";
 
-    static Connection getConnection() {
+
+    public static Connection getConnection() {
         Connection conn = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
