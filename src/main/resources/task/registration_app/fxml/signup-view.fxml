@@ -31,7 +31,10 @@
       <TextField fx:id="signUpUsername" layoutX="100.0" layoutY="294.0" prefHeight="45.0" prefWidth="360.0" promptText="Username" styleClass="form-text-field" />
       <TextField fx:id="signUpEmail" layoutX="100.0" layoutY="350.0" prefHeight="45.0" prefWidth="360.0" promptText="Email" styleClass="form-text-field" />
       <PasswordField fx:id="signUpPassword" layoutX="100.0" layoutY="410.0" prefHeight="45.0" prefWidth="360.0" promptText="Password" styleClass="form-text-field" />
-      <Button fx:id="btnSignUp" layoutX="201.0" layoutY="509.0" mnemonicParsing="false" onAction="#onClickSignUp" prefHeight="43.0" prefWidth="158.0" style="-fx-background-color: #f69a1d;" styleClass="long-buttons" text="SIGN UP" textAlignment="CENTER" textFill="#242422" AnchorPane.bottomAnchor="88.60000000000002" AnchorPane.leftAnchor="201.0" AnchorPane.rightAnchor="201.0" AnchorPane.topAnchor="509.0" />
+      <Button fx:id="btnSignUp" layoutX="201.0" layoutY="509.0" mnemonicParsing="false" onAction="#onClickSignUp" prefHeight="43.0" prefWidth="158.0" style="-fx-background-color: #f69a1d;" styleClass="long-buttons" text="SIGN UP" textAlignment="CENTER" textFill="#242422" AnchorPane.bottomAnchor="88.60000000000002" AnchorPane.leftAnchor="201.0" AnchorPane.rightAnchor="201.0" AnchorPane.topAnchor="509.0">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
 
       <Label alignment="CENTER" layoutX="103.0" layoutY="208.0" prefHeight="22.0" prefWidth="354.0" text="Create your account using your email" textFill="#383836" AnchorPane.leftAnchor="103.0" AnchorPane.rightAnchor="103.0">
          <font>

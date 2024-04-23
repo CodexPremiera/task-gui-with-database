@@ -15,7 +15,6 @@ import task.database.TblUserAccount;
 import task.entities.UserAccount;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Objects;
 
 public class SignUpController {
@@ -31,7 +30,6 @@ public class SignUpController {
     private Scene scene;
 
     private UserAccount userAccount;
-    private HomeController homeController = new HomeController();
 
     /* METHODS */
 
@@ -62,17 +60,24 @@ public class SignUpController {
             return;
         }
 
-        // enter home
-        homeController.launchHome(actionEvent, userAccount);
+        // get controller of the profile view and launch it
+        switchToProfile(actionEvent);
     }
 
-    public void onClickLogout(ActionEvent actionEvent) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/signup-view.fxml")));
+    private void switchToProfile(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/profile-view.fxml"));
+        root = loader.load();
+
+        ProfileController profileController = loader.getController();
+        profileController.setUserAccount(userAccount);
+        profileController.showProfile();
+
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
+
 
     public void setSwitchLogin(ActionEvent actionEvent) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/login-view.fxml")));

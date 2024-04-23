@@ -30,7 +30,6 @@ public class LoginController {
     private Stage stage;
     private Scene scene;
     private UserAccount userAccount;
-    private HomeController homeController = new HomeController();
 
 
     public void onClickLogin(ActionEvent actionEvent) throws IOException {
@@ -46,6 +45,7 @@ public class LoginController {
 
         try {
             this.userAccount = TblUserAccount.retrieve(username, password);
+            System.out.println(userAccount);
         } catch (IllegalArgumentException e) {
             loginRemark.setText(e.getMessage());
             return;
@@ -54,8 +54,22 @@ public class LoginController {
             return;
         }
 
-        // enter home
-        homeController.launchHome(actionEvent, userAccount);
+        // get controller of the profile view and launch it
+        switchToProfile(actionEvent);
+    }
+
+    private void switchToProfile(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/profile-view.fxml"));
+        root = loader.load();
+
+        ProfileController profileController = loader.getController();
+        profileController.setUserAccount(userAccount);
+        profileController.showProfile();
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
     public void setSwitchSignUp(ActionEvent actionEvent) throws IOException {
