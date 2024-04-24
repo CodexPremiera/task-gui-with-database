@@ -1,19 +1,20 @@
 package task.registration_app;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
+import task.database.TblTodo;
 import task.entities.UserAccount;
 
 import java.io.IOException;
+import java.util.List;
 
 public class LandingController {
     /* ELEMENTS */
@@ -27,12 +28,17 @@ public class LandingController {
     @FXML public TextArea landingInput;
     @FXML public Label landingRemark;
 
-    @FXML public TableView todoTable;
+    @FXML public TableView<Todo> todoTable;
+    @FXML private TableColumn<Todo, String> todoColumn;
+
+    @FXML private TableColumn<Todo, String> dateColumn;
+
 
     private Parent root;
     private Stage stage;
     private Scene scene;
     private UserAccount userAccount;
+
 
 
     /* METHODS */
@@ -48,11 +54,40 @@ public class LandingController {
 
         btnLandingUpdate.setVisible(false);
         btnLandingDelete.setVisible(false);
+        showEntries();
+    }
+
+    private void showEntries() {
+        List<Todo> todoList = TblTodo.retrieveAllOf(userAccount.getId());
+
+        System.out.println("Todo List:");
+        for (Todo todo : todoList) {
+            System.out.println(todo.getId() + " | " + todo.getTodo() + " | " + todo.getCreateTime());
+        }
+
+        ObservableList<Todo> data = FXCollections.observableArrayList(todoList);
+        todoTable.setItems(data);
+        todoTable.refresh();
     }
 
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
         landingGreeting.setText("Hello, " + userAccount.getUsername());
+    }
+
+    public void addTodo() {
+        String todo = landingInput.getText();
+        if (todo.trim().isEmpty()) {
+            landingRemark.setText("Can't add an empty task.");
+            return;
+        }
+
+        try {
+            TblTodo.insert(userAccount.getId(), todo);
+            landingRemark.setText("A new todo is added.");
+        } catch (IllegalArgumentException e) {
+            landingRemark.setText("The user account does not exist.");
+        }
     }
 
     public void onClickOpenProfile(ActionEvent actionEvent) throws IOException {
@@ -62,6 +97,7 @@ public class LandingController {
         ProfileController profileController = loader.getController();
         profileController.launch(actionEvent, root, userAccount);
     }
+
 
     public void onClickLogout(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/login-view.fxml"));

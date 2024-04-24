@@ -1,8 +1,10 @@
 package task.database;
 
-import task.entities.Todo;
+import task.registration_app.Todo;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TblTodo {
     public static void main(String[] args) {
@@ -87,6 +89,41 @@ public class TblTodo {
             return new Todo(id, userId, todo, createTime);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e.getMessage());
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    public static List<Todo> retrieveAllOf(String userId) throws IllegalArgumentException {
+        if (!TblUserAccount.userExists(userId))
+            throw new IllegalArgumentException("UserAccount does not exist");
+
+        try (Connection connection = Database.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     """
+                             SELECT ROW_NUMBER() OVER () AS No,
+                                    ToDo,
+                                    CreateTime\s
+                             FROM tbl_todo
+                             WHERE ID_User = ?
+                             ORDER BY CreateTime DESC;"""))
+        {
+            preparedStatement.setString(1, userId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                List<Todo> todoList = new ArrayList<>();
+
+                while (resultSet.next()) {
+                    String id = resultSet.getString("No");
+                    String todo = resultSet.getString("ToDo");
+                    String createTime = resultSet.getString("CreateTime");
+
+                    Todo todoItem = new Todo(id, null, todo, createTime);
+                    todoList.add(todoItem);
+                }
+
+                return todoList;
+            }
         } catch (SQLException e) {
             return null;
         }

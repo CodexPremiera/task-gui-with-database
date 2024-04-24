@@ -6,4 +6,6 @@ module task.registration_app {
 
     opens task.registration_app to javafx.fxml;
     exports task.registration_app;
+    exports task.entities;
+    exports task.database;
 }

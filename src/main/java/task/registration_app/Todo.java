@@ -1,4 +1,4 @@
-package task.entities;
+package task.registration_app;
 
 public class Todo {
     /* FIELDS */
