@@ -8,6 +8,15 @@
     -fx-padding: 0 0 0 16.0; /* Top, Right, Bottom, Left */
 }
 
+.todo-text-field {
+    -fx-prompt-text-fill: #cedecf;
+    -fx-background-color: #cedecf;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-font-family: "Montserrat Regular";
+    -fx-font-size: 16.0;
+}
+
 .long-buttons {
     -fx-border-radius: 27;
     -fx-background-radius: 27;

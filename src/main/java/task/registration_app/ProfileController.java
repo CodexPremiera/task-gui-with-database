@@ -125,6 +125,14 @@ public class ProfileController {
         }
     }
 
+    public void onClickBackToLanding(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/landing-view.fxml"));
+        root = loader.load();
+
+        LandingController controller = loader.getController();
+        controller.launch(actionEvent, root, userAccount);
+    }
+
     public void onClickLogout(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/login-view.fxml"));
         root = loader.load();

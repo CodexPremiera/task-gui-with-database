@@ -16,8 +16,6 @@ import task.database.TblUserAccount;
 import task.entities.UserAccount;
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Objects;
 
 public class LoginController {
     @FXML public AnchorPane loginContainer;
@@ -67,15 +65,15 @@ public class LoginController {
             return;
         }
 
-        switchToProfile(actionEvent, userAccount);
+        switchToLanding(actionEvent, userAccount);
     }
 
-    private void switchToProfile(ActionEvent actionEvent, UserAccount userAccount) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/profile-view.fxml"));
+    private void switchToLanding(ActionEvent actionEvent, UserAccount userAccount) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/landing-view.fxml"));
         root = loader.load();
 
-        ProfileController profileController = loader.getController();
-        profileController.launch(actionEvent, root, userAccount);
+        LandingController landingController = loader.getController();
+        landingController.launch(actionEvent, root, userAccount);
     }
 
     public void setSwitchSignUp(ActionEvent actionEvent) throws IOException {

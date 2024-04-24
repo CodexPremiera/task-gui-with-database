@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="640.0" maxWidth="960.0" minHeight="640.0" minWidth="960.0" prefHeight="640.0" prefWidth="960.0" style="-fx-background-color: #242422;" stylesheets="@../css/LoginStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="task.registration_app.LandingController">
+   <AnchorPane layoutX="554.0" prefHeight="640.0" prefWidth="400.0" style="-fx-background-color: #242422;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Label fx:id="landingGreeting" contentDisplay="CENTER" layoutX="52.0" layoutY="74.0" prefHeight="52.0" prefWidth="296.0" text="Hello, User!" textAlignment="CENTER" textFill="#f69a1d" AnchorPane.leftAnchor="52.0" AnchorPane.rightAnchor="52.80000000000001">
+         <font>
+            <Font name="Montserrat ExtraBold" size="24.0" />
+         </font>
+      </Label>
+      <Text fill="#cedecf" layoutX="52.0" layoutY="288.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add a new todo or edit an old one." wrappingWidth="307.9999999999999" AnchorPane.leftAnchor="52.0" AnchorPane.rightAnchor="58.40000000000009">
+         <font>
+            <Font name="Montserrat Regular" size="16.0" />
+         </font>
+      </Text>
+      <Button fx:id="btnLandingDelete" layoutX="52.0" layoutY="515.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="132.0" style="-fx-border-color: #cedecf; -fx-background-color: #242422;" styleClass="long-buttons" text="DELETE" textAlignment="CENTER" textFill="#cedecf" />
+      <Button fx:id="btnLandingUpdate" layoutX="227.0" layoutY="515.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="132.0" style="-fx-border-color: #cedecf; -fx-background-color: #242422;" styleClass="long-buttons" text="UPDATE" textAlignment="CENTER" textFill="#cedecf" />
+      <Button fx:id="btnLandingSubmit" layoutX="140.0" layoutY="515.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="132.0" style="-fx-border-color: #cedecf; -fx-background-color: #242422;" styleClass="long-buttons" text="SUBMIT" textAlignment="CENTER" textFill="#cedecf" />
+      <TextArea fx:id="landingInput" layoutX="52.0" layoutY="313.0" prefHeight="149.0" prefWidth="307.0" promptText="what's on your mind...." styleClass="todo-text-field" wrapText="true" />
+      <Label fx:id="landingRemark" layoutX="52.0" layoutY="471.0" prefHeight="18.0" prefWidth="307.0" textFill="#e7edde" />
+      <Button fx:id="switchToProfile" layoutX="52.0" layoutY="126.0" mnemonicParsing="false" onAction="#onClickOpenProfile" prefHeight="22.0" prefWidth="132.0" style="-fx-border-color: #cedecf; -fx-background-color: #242422;" styleClass="long-buttons" text="EDIT PROFILE" textAlignment="CENTER" textFill="#cedecf" />
+   </AnchorPane>
+   <AnchorPane fx:id="loginContainer" layoutX="442.0" minHeight="640.0" minWidth="507.0" prefHeight="640.0" prefWidth="560.0" style="-fx-background-color: #e7edde; -fx-background-radius: 0 0 0 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Button fx:id="btnLandingEdit" layoutX="357.0" layoutY="518.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="146.0" style="-fx-background-color: #f69a1d;" styleClass="long-buttons" text="EDIT" textAlignment="CENTER" textFill="#242422" AnchorPane.bottomAnchor="80.39999999999998" AnchorPane.leftAnchor="357.0" AnchorPane.rightAnchor="57.39999999999998" AnchorPane.topAnchor="518.0" />
+
+         <Label layoutX="59.0" layoutY="123.0" prefHeight="22.0" prefWidth="442.0" text="Complete your tasks and remove when your done." textFill="#383836" AnchorPane.leftAnchor="59.0" AnchorPane.rightAnchor="58.60000000000002">
+         <font>
+            <Font name="Montserrat Regular" size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="59.2" layoutY="78.0" prefHeight="52.0" prefWidth="282.0" text="Your Todos" textFill="#242422" AnchorPane.leftAnchor="59.2" AnchorPane.rightAnchor="221.59999999999997">
+         <font>
+            <Font name="Montserrat Bold" size="24.0" />
+         </font>
+      </Label>
+      <TableView fx:id="todoTable" layoutX="59.0" layoutY="175.0" prefHeight="330.0" prefWidth="442.0">
+        <columns>
+          <TableColumn prefWidth="45.60003662109375" text="No." />
+          <TableColumn prefWidth="303.20001220703125" text="Todo" />
+            <TableColumn prefWidth="93.59991455078125" text="Date" />
+        </columns>
+      </TableView>
+      <Button fx:id="btnLandingLogout" layoutX="430.0" layoutY="593.0" mnemonicParsing="false" onAction="#onClickLogout" prefHeight="25.0" prefWidth="71.0" style="-fx-background-color: transparent;" styleClass="long-buttons" text="Log Out" textAlignment="CENTER" textFill="#242422" underline="true" />
+   </AnchorPane>
+
+</AnchorPane>
