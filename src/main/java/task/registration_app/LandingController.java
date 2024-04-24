@@ -88,6 +88,8 @@ public class LandingController {
         } catch (IllegalArgumentException e) {
             landingRemark.setText("The user account does not exist.");
         }
+
+        showEntries();
     }
 
     public void onClickOpenProfile(ActionEvent actionEvent) throws IOException {
