@@ -33,12 +33,15 @@ public class ProfileController {
 
 
     /* METHODS */
-    public void launchProfile(ActionEvent actionEvent) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/profile-view.fxml")));
+    public void launch(ActionEvent actionEvent, Parent launchRoot, UserAccount userAccount) throws IOException {
+        this.setUserAccount(userAccount);
+        this.showProfile();
+        this.root = launchRoot;
+
         stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         scene = new Scene(root);
-
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 
@@ -88,6 +91,7 @@ public class ProfileController {
             try {
                 TblUserAccount.update(userAccount, newUsername, newEmail, newPassword);
                 profileRemark.setText("Profile has been updated");
+                return;
             } catch (IllegalArgumentException e) {
                 profileRemark.setText("The user account does not exist in the database.");
             } catch (SQLException e) {
@@ -122,11 +126,11 @@ public class ProfileController {
     }
 
     public void onClickLogout(ActionEvent actionEvent) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/login-view.fxml")));
-        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene(root);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/login-view.fxml"));
+        root = loader.load();
 
-        stage.setScene(scene);
-        stage.show();
+        LoginController loginController = loader.getController();
+        loginController.launch(actionEvent, root);
     }
+
 }

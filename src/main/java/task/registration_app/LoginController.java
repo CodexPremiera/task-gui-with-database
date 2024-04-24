@@ -31,6 +31,16 @@ public class LoginController {
     private Scene scene;
     private UserAccount userAccount;
 
+    public void launch(ActionEvent actionEvent, Parent launchRoot) throws IOException {
+        this.root = launchRoot;
+
+        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+
 
     public void onClickLogin(ActionEvent actionEvent) throws IOException {
         // get form input
@@ -63,20 +73,14 @@ public class LoginController {
         root = loader.load();
 
         ProfileController profileController = loader.getController();
-        profileController.setUserAccount(userAccount);
-        profileController.showProfile();
-
-        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        profileController.launch(actionEvent, root, userAccount);
     }
 
     public void setSwitchSignUp(ActionEvent actionEvent) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/signup-view.fxml")));
-        stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/signup-view.fxml"));
+        root = loader.load();
+
+        SignUpController signUpController = loader.getController();
+        signUpController.launch(actionEvent, root);
     }
 }
