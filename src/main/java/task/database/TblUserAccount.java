@@ -5,20 +5,7 @@ import task.entities.UserAccount;
 import java.sql.*;
 
 public class TblUserAccount {
-    public static void main(String[] args) {
-        createTable();
-        UserAccount userAccount = null;
-        try {
-            userAccount = retrieve("ashleey@email.com", "ashley_ken_123");
-        } catch (SQLException | IllegalArgumentException e) {
-            System.out.println(
-                    "Failed to retrieve user-account:" + "\n"
-                            + e.getMessage() + "\n"
-            );
-        }
-        System.out.println(userAccount);
-    }
-
+    public static void main(String[] args) {}
 
     /**
      * CREATE
@@ -152,26 +139,22 @@ public class TblUserAccount {
         return false;
     }
 
-
     /**
-     * RETRIEVE
+     * RETRIEVES
      * <p>
-     * This method Retrieves a user account from the database. It queries the 'tbl_user_account'
-     * table in the database to retrieve the user account associated with the specified email
-     * and password.
-     * <p>
-     * If a matching user account is found, the method returns it as a new {@link UserAccount}
-     * object. If none is found or if the password is wrong, it throws an exception.
+     * This method retrieves a user account from the database by email and password. If a
+     * matching user account is found, the method returns it as a new {@link UserAccount}
+     * object. If none is found or if the password is incorrect, it throws an exception.
      * <p>
      * Note: This method handles database connectivity internally and does not require
      * the caller to provide a database connection.
      *
      * @param email the email of the user account to retrieve
      * @param password the password of the user account to retrieve
-     * @return a UserAccount object representing the retrieved user account,
-     *         or null if no matching user account is found
-     * @throws IllegalArgumentException indicating a non-existing account of a wrong password.
-     * @throws SQLException indicating a database failure to retrieve the user account
+     * @return a UserAccount object representing the retrieved user account
+     * @throws IllegalArgumentException if the user account does not exist or if the
+     * password is incorrect
+     * @throws SQLException if there is a database failure to retrieve the user account
      * */
     public static UserAccount retrieve(String email, String password) throws IllegalArgumentException, SQLException {
         try (Connection connection = MySQLConnection.getConnection();
@@ -200,38 +183,105 @@ public class TblUserAccount {
     }
 
 
-    public void update(String newName, String newEmail, String newPassword) {
+    /**
+     * UPDATE
+     * <p>
+     * This method updates the details of a user account in the database with the provided new name,
+     * email, and password. It first checks if the provided user account exists in the database based
+     * on its UUID using the {@link #uuidExists} method. If the user account exists, it updates the
+     * corresponding record in the 'tbl_user_account' table with the new details.
+     * <p>
+     * Note: This method requires the caller to provide a valid {@link UserAccount} object and the
+     * new details (name, email, and password) to perform the update operation.
+     * <p>
+     * If the provided user account does not exist, it throws an IllegalArgumentException.
+     *
+     * @param userAccount the UserAccount object representing the user account to be
+     *                    updated
+     * @param newName the new name to be set for the user account
+     * @param newEmail the new email to be set for the user account
+     * @param newPassword the new password to be set for the user account
+     * @throws IllegalArgumentException if the provided user account does not exist
+     * in the database
+     * @throws SQLException if the database fails to update the user account
+     * */
+
+    public static void update(UserAccount userAccount, String newName, String newEmail, String newPassword)
+            throws IllegalArgumentException, SQLException {
+        String uuid = userAccount.getId();
+        if (!uuidExists(uuid))
+            throw new IllegalArgumentException("The given user-account does not exists.");
+
         try (Connection connection = MySQLConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "UPDATE User SET name = ?, email = ?, password = ? " +
-                             "WHERE id = ?"
+                     "UPDATE tbl_user_account SET Username = ?, Email = ?, Password = ? " +
+                             "WHERE ID_User = ?"
              ) )
         {
             preparedStatement.setString(1, newName);
             preparedStatement.setString(2, newEmail);
             preparedStatement.setString(3, newPassword);
-            preparedStatement.setInt(4, 1);
+            preparedStatement.setString(4, uuid);
 
-            int rowsUpdated = preparedStatement.executeUpdate();
-            System.out.println(rowsUpdated + " row(s) updated.");
+            preparedStatement.executeUpdate();
+
+            userAccount.setUsername(newName);
+            userAccount.setEmail(newEmail);
+            userAccount.setPassword(newPassword);
         } catch (SQLException e) {
-            System.out.println("Data has not been updated.");
+            throw new SQLException("Database failure. Data has not been updated.");
         }
     }
 
-    public void delete(String email) {
+
+    /**
+     * DELETE
+     * <p>
+     * This method deletes a user account from the database based on the provided UserAccount object.
+     * It first checks if the provided user account exists in the database based on its UUID using
+     * the {@link #uuidExists} method. If the user account exists, it deletes the corresponding record
+     * from the 'tbl_user_account' table.
+     * <p>
+     * Note: This method requires the caller to provide a valid {@link UserAccount} object representing
+     * the user account to be deleted.
+     * <p>
+     * If the provided user account does not exist, it throws an IllegalArgumentException.
+     *
+     * @param userAccount the UserAccount object representing the user account to be deleted
+     * @throws IllegalArgumentException if the provided user account does not exist in the database
+     * @throws SQLException if the database fails to delete the user account
+     */
+    public static void delete(UserAccount userAccount) throws IllegalArgumentException, SQLException {
+        String uuid = userAccount.getId();
+        if (!uuidExists(uuid))
+            throw new IllegalArgumentException("Can't delete a not-existent user-account.");
+
         try (Connection connection = MySQLConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "DELETE FROM User " +
-                             "WHERE email = ?")
+                     "DELETE FROM tbl_user_account " +
+                             "WHERE ID_User = ?")
         ) {
-            int id = 2;
-            preparedStatement.setString(2, email);
-
-            int rowsDeleted = preparedStatement.executeUpdate();
-            System.out.println(rowsDeleted + " row(s) deleted.");
+            preparedStatement.setString(1, uuid);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Data has not been deleted.");
+            throw new SQLException("Database failure. Data has not been deleted.");
         }
+    }
+
+    private static boolean uuidExists(String uuid) {
+        try (Connection connection = MySQLConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "SELECT COUNT(*) FROM tbl_user_account WHERE ID_User = ?")
+        ) {
+            preparedStatement.setString(1, uuid);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    return count > 0;
+                }
+            }
+        } catch (SQLException ignored) {}
+
+        return false;
     }
 }

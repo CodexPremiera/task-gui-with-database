@@ -40,7 +40,7 @@ public class SignUpController {
         String email = signUpEmail.getText().trim();
 
         // validations
-        if (username.equals("") || password.trim().equals("") || email.equals("")) {
+        if (username.isEmpty() || password.trim().isEmpty() || email.isEmpty()) {
             signUpRemark.setText("Please fill in all the fields.");
             return;
         }
