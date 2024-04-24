@@ -5,7 +5,10 @@ import task.entities.UserAccount;
 import java.sql.*;
 
 public class TblUserAccount {
-    public static void main(String[] args) {}
+    public static void main(String[] args) {
+        // run main to create table if not exist
+        createTable();
+    }
 
     /**
      * CREATE
@@ -29,56 +32,25 @@ public class TblUserAccount {
     public static void createTable() {
         String createTableQuery = """
             CREATE TABLE IF NOT EXISTS `tbl_user_account` (
-            `ID_User` CHAR(36) NOT NULL,
-            `Username` VARCHAR(255) NOT NULL,
-            `Email` VARCHAR(255) UNIQUE NOT NULL,
-            `Password` VARCHAR(255) NOT NULL,
-            `CreateTime` DATETIME,
-            `IsActive` BOOLEAN DEFAULT true,
-            PRIMARY KEY (`ID_User`))""";
+                `ID_User` CHAR(36) NOT NULL,
+                `Username` VARCHAR(255) NOT NULL,
+                `Email` VARCHAR(255) UNIQUE NOT NULL,
+                `Password` VARCHAR(255) NOT NULL,
+                `CreateTime` DATETIME,
+                `IsActive` BOOLEAN DEFAULT true,
+                PRIMARY KEY (`ID_User`)
+            )""";
 
         String createTriggerQuery = """
             CREATE TRIGGER pre_insert
-            BEFORE INSERT ON tbl_user_account
-            FOR EACH ROW
+                BEFORE INSERT ON tbl_user_account
+                FOR EACH ROW
             BEGIN
                 SET NEW.CreateTime = CURRENT_TIMESTAMP();
                 SET NEW.ID_User = UUID();
             END""";
 
-        Connection connection = null;
-
-        try {
-            connection = MySQLConnection.getConnection();
-            connection.setAutoCommit(false);
-
-            Statement statement = connection.createStatement();
-            statement.execute(createTableQuery);
-            statement.execute(createTriggerQuery);
-
-            connection.commit();
-            System.out.println("Transaction committed.");
-        } catch (SQLException | NullPointerException e) {
-            System.out.println(
-                    "Failed to create table. Rolling back changes." + "\n"
-                    + e.getMessage() + "\n"
-            );
-            try {
-                if (connection != null)
-                    connection.rollback();
-            } catch (SQLException ex) {
-                System.out.println("Rollback failed." + "\n" + ex.getMessage());
-            }
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.setAutoCommit(true);
-                    connection.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println("Failed to close connection." + "\n" + ex.getMessage());
-            }
-        }
+        Database.createTable(createTableQuery, createTriggerQuery);
     }
 
 
@@ -97,11 +69,12 @@ public class TblUserAccount {
      * @return UserAccount object of newly created class
      * @throws IllegalArgumentException the given email already exists
      * */
-    public static UserAccount insert(String username, String email, String password) throws IllegalArgumentException {
+    public static UserAccount insert(String username, String email, String password)
+            throws IllegalArgumentException {
         if (emailExists(email))
             throw new IllegalArgumentException("The given email already exists.");
 
-        try (Connection connection = MySQLConnection.getConnection();
+        try (Connection connection = Database.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                      "INSERT INTO tbl_user_account (Username, Email, Password) " +
                              "VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)
@@ -111,19 +84,20 @@ public class TblUserAccount {
             preparedStatement.setString(3, password);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Data has not been inserted." + "\n"
+            System.out.println("Failed to add user account." + "\n"
                     + e.getMessage());
+            return null;
         }
 
         try {
             return retrieve(email, password);
-        } catch (SQLException e) {
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }
 
     private static boolean emailExists(String email) {
-        try (Connection connection = MySQLConnection.getConnection();
+        try (Connection connection = Database.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                      "SELECT COUNT(*) FROM tbl_user_account WHERE Email = ?")
         ) {
@@ -156,8 +130,8 @@ public class TblUserAccount {
      * password is incorrect
      * @throws SQLException if there is a database failure to retrieve the user account
      * */
-    public static UserAccount retrieve(String email, String password) throws IllegalArgumentException, SQLException {
-        try (Connection connection = MySQLConnection.getConnection();
+    public static UserAccount retrieve(String email, String password) throws IllegalArgumentException {
+        try (Connection connection = Database.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                 "SELECT * FROM tbl_user_account WHERE Email = ?"))
         {
@@ -178,7 +152,7 @@ public class TblUserAccount {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e.getMessage());
         } catch (SQLException e) {
-            throw new SQLException(e.getMessage());
+            return null;
         }
     }
 
@@ -188,7 +162,7 @@ public class TblUserAccount {
      * <p>
      * This method updates the details of a user account in the database with the provided new name,
      * email, and password. It first checks if the provided user account exists in the database based
-     * on its UUID using the {@link #uuidExists} method. If the user account exists, it updates the
+     * on its UUID using the {@link #userExists} method. If the user account exists, it updates the
      * corresponding record in the 'tbl_user_account' table with the new details.
      * <p>
      * Note: This method requires the caller to provide a valid {@link UserAccount} object and the
@@ -209,10 +183,10 @@ public class TblUserAccount {
     public static void update(UserAccount userAccount, String newName, String newEmail, String newPassword)
             throws IllegalArgumentException, SQLException {
         String uuid = userAccount.getId();
-        if (!uuidExists(uuid))
+        if (!userExists(uuid))
             throw new IllegalArgumentException("The given user-account does not exists.");
 
-        try (Connection connection = MySQLConnection.getConnection();
+        try (Connection connection = Database.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                      "UPDATE tbl_user_account SET Username = ?, Email = ?, Password = ? " +
                              "WHERE ID_User = ?"
@@ -239,7 +213,7 @@ public class TblUserAccount {
      * <p>
      * This method deletes a user account from the database based on the provided UserAccount object.
      * It first checks if the provided user account exists in the database based on its UUID using
-     * the {@link #uuidExists} method. If the user account exists, it deletes the corresponding record
+     * the {@link #userExists} method. If the user account exists, it deletes the corresponding record
      * from the 'tbl_user_account' table.
      * <p>
      * Note: This method requires the caller to provide a valid {@link UserAccount} object representing
@@ -253,10 +227,10 @@ public class TblUserAccount {
      */
     public static void delete(UserAccount userAccount) throws IllegalArgumentException, SQLException {
         String uuid = userAccount.getId();
-        if (!uuidExists(uuid))
+        if (!userExists(uuid))
             throw new IllegalArgumentException("Can't delete a not-existent user-account.");
 
-        try (Connection connection = MySQLConnection.getConnection();
+        try (Connection connection = Database.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                      "DELETE FROM tbl_user_account " +
                              "WHERE ID_User = ?")
@@ -268,8 +242,8 @@ public class TblUserAccount {
         }
     }
 
-    private static boolean uuidExists(String uuid) {
-        try (Connection connection = MySQLConnection.getConnection();
+    public static boolean userExists(String uuid) {
+        try (Connection connection = Database.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                      "SELECT COUNT(*) FROM tbl_user_account WHERE ID_User = ?")
         ) {

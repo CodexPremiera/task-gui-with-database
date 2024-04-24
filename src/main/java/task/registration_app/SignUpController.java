@@ -15,6 +15,7 @@ import task.database.TblUserAccount;
 import task.entities.UserAccount;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class SignUpController {
@@ -28,8 +29,6 @@ public class SignUpController {
     private Parent root;
     private Stage stage;
     private Scene scene;
-
-    private UserAccount userAccount;
 
     /* METHODS */
     public void launch(ActionEvent actionEvent, Parent launchRoot) throws IOException {
@@ -47,8 +46,9 @@ public class SignUpController {
         String username = signUpUsername.getText().trim();
         String password = signUpPassword.getText();
         String email = signUpEmail.getText().trim();
+        UserAccount userAccount;
 
-        // validations
+        // input validations
         if (username.isEmpty() || password.trim().isEmpty() || email.isEmpty()) {
             signUpRemark.setText("Please fill in all the fields.");
             return;
@@ -62,18 +62,23 @@ public class SignUpController {
             return;
         }
 
+        // try insert and get row
         try {
-            this.userAccount = TblUserAccount.insert(username, email, password);
+            userAccount = TblUserAccount.insert(username, email, password);
         } catch (IllegalArgumentException e) {
             signUpRemark.setText(e.getMessage());
             return;
         }
 
-        // get controller of the profile view and launch it
-        switchToProfile(actionEvent);
+        if (userAccount == null) {
+            signUpRemark.setText("Error occurred in database.");
+            return;
+        }
+
+        switchToProfile(actionEvent, userAccount);
     }
 
-    private void switchToProfile(ActionEvent actionEvent) throws IOException {
+    private void switchToProfile(ActionEvent actionEvent, UserAccount userAccount) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/profile-view.fxml"));
         root = loader.load();
 

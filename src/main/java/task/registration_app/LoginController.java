@@ -29,7 +29,7 @@ public class LoginController {
     private Parent root;
     private Stage stage;
     private Scene scene;
-    private UserAccount userAccount;
+
 
     public void launch(ActionEvent actionEvent, Parent launchRoot) throws IOException {
         this.root = launchRoot;
@@ -46,6 +46,7 @@ public class LoginController {
         // get form input
         String username = loginEmail.getText().trim();
         String password = loginPassword.getText();
+        UserAccount userAccount;
 
         // validations
         if (username.equals("") || password.trim().equals("")) {
@@ -54,21 +55,22 @@ public class LoginController {
         }
 
         try {
-            this.userAccount = TblUserAccount.retrieve(username, password);
-            System.out.println(userAccount);
+            userAccount = TblUserAccount.retrieve(username, password);
         } catch (IllegalArgumentException e) {
             loginRemark.setText(e.getMessage());
-            return;
-        } catch (SQLException e) {
-            loginRemark.setText("Error occurred in database.");
             return;
         }
 
         // get controller of the profile view and launch it
-        switchToProfile(actionEvent);
+        if (userAccount == null) {
+            loginRemark.setText("Error occurred in database.");
+            return;
+        }
+
+        switchToProfile(actionEvent, userAccount);
     }
 
-    private void switchToProfile(ActionEvent actionEvent) throws IOException {
+    private void switchToProfile(ActionEvent actionEvent, UserAccount userAccount) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/profile-view.fxml"));
         root = loader.load();
 
